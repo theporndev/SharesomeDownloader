@@ -42,6 +42,14 @@ async def download_video(session, video_url, downloads_dir="."):
     except Exception:
         return False
 
+async def get_video_url(post_url):
+    async with aiohttp.ClientSession() as session:
+        for attempt in range(2):
+            video_url = await fetch_post(session, post_url)
+            if video_url:
+                return video_url
+        print(f"Download failed for: {post_url}")
+
 
 async def get_video(post_url):
     """
@@ -74,7 +82,7 @@ def main():
     parser.add_argument(
         "urls",
         nargs="*",  # Accept zero or more URLs
-        help="The URLs of the videos to download",
+        help="The URLs of the videos to download separated with a space",
     )
     args = parser.parse_args()
 
